@@ -41,5 +41,5 @@ if __name__ == '__main__':
         'timedelta_micro': str(p['timedelta_micro']),
     } for p in trackpoints], indent=2)
 
-    with open('ride-to-glory.js', 'w') as f:
+    with open('src/trackpoints.js', 'w') as f:
         f.write("module.exports = " + data)
