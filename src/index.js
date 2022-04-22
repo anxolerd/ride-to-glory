@@ -2,6 +2,8 @@
 
 const xmlbuilder = require('xmlbuilder2');
 const trackpoints = require('./trackpoints.js');
+const FLUCTUATION_PROBABILITY = 0.3;
+const FLUCTUATION = 0.0001;
 
 function constructGpxRide(startTime, name) {
     let root = xmlbuilder.create({ version: '1.0', encoding: "UTF-8"  })
@@ -15,12 +17,12 @@ function constructGpxRide(startTime, name) {
             .att('version', '1.1')
             .ele('metadata')
                 .ele('name')
-                    .txt('')
+                    .txt(name)
                 .up()
             .up()
             .ele('trk')
                 .ele('name')
-                    .txt('TODO')
+                    .txt(name)
                 .up()
                 .ele('type')
                     .txt('Cycling')
@@ -28,11 +30,17 @@ function constructGpxRide(startTime, name) {
                 .ele('trkseg');
 
     trackpoints.forEach((p) => {
-        let lat = p.lat;
-        let lng = p.lng;
+        let lat = Number(p.lat);
+        let lng = Number(p.lng);
+        if (Math.random() < FLUCTUATION_PROBABILITY) {
+            lat = lat + Math.random() * FLUCTUATION;
+        }
+        if (Math.random() < FLUCTUATION_PROBABILITY) {
+            lng = lng + Math.random() * FLUCTUATION;
+        }
         root = root.ele('trkpt')
-            .att('lat', lat)
-            .att('lon', lng)
+            .att('lat', lat.toString())
+            .att('lon', lng.toString())
             .ele('ele')
                 .txt(p.elevation)
                 .up()
