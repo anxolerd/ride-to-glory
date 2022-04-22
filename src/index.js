@@ -46,3 +46,21 @@ root = root
     .up()
     .end({pretty: true});
 console.log(root.toString());
+
+function saveFile(filename, data, type) {
+    // https://stackoverflow.com/a/46819159
+    const blob = new Blob([data], { type: type });
+    if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+    }
+    else {
+        const elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+}
+
+saveFile('ride-to-glory.gpx', root.toString(), 'application/gpx+xml');
