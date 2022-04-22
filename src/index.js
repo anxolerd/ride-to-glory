@@ -2,10 +2,9 @@
 
 const xmlbuilder = require('xmlbuilder2');
 const trackpoints = require('./trackpoints.js');
-const FLUCTUATION_PROBABILITY = 0.3;
 const FLUCTUATION = 0.0001;
 
-function constructGpxRide(startTime, name) {
+function constructGpxRide(startTime, name, fluctuation_probability) {
     let root = xmlbuilder.create({ version: '1.0', encoding: "UTF-8"  })
         .ele('gpx')
             .att('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
@@ -32,10 +31,10 @@ function constructGpxRide(startTime, name) {
     trackpoints.forEach((p) => {
         let lat = Number(p.lat);
         let lng = Number(p.lng);
-        if (Math.random() < FLUCTUATION_PROBABILITY) {
+        if (Math.random() < fluctuation_probability) {
             lat = lat + Math.random() * FLUCTUATION;
         }
-        if (Math.random() < FLUCTUATION_PROBABILITY) {
+        if (Math.random() < fluctuation_probability) {
             lng = lng + Math.random() * FLUCTUATION;
         }
         root = root.ele('trkpt')
@@ -74,8 +73,13 @@ function saveFile(filename, data, type) {
     }
 }
 
-saveFile(
-    'ride-to-glory.gpx',
-    constructGpxRide(new Date(), 'Fuck russia!').toString(),
-    'application/gpx+xml'
-);
+const btn_generate = document.getElementById('form_generate');
+btn_generate.addEventListener('click', function() {
+    const title = document.getElementById('form_title').value;
+    const fluctuation_probability = Number(document.getElementById('form_fluctuation_prob').value) / 100;
+    saveFile(
+        'ride-to-glory.gpx',
+        constructGpxRide(new Date(), title, fluctuation_probability).toString(),
+        'application/gpx+xml'
+    );
+});
