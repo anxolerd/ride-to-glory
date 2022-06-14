@@ -3,7 +3,7 @@
 const xmlbuilder = require('xmlbuilder2');
 const trackpoints = require('./trackpoints.js');
 const FLUCTUATION = 0.0001;
-const TIME_DRIFT = 1000;
+const TIME_DRIFT = 1;
 
 
 function constructGpxRide(startTime, name, fluctuation_probability) {
@@ -39,11 +39,10 @@ function constructGpxRide(startTime, name, fluctuation_probability) {
         if (Math.random() < fluctuation_probability) {
             lng = lng + Math.random() * FLUCTUATION;
         }
-        let timedelta = p.timedelta_micro;
+        let time = new Date(startTime.getTime() + (Number(p.timedelta_micro) / 1000));
         if (Math.random() < fluctuation_probability) {
-            timedelta = timedelta + (Math.random() * TIME_DRIFT - TIME_DRIFT / 2);
+            time = time + (Math.random() * TIME_DRIFT - TIME_DRIFT / 2);
         }
-        let time = new Date(startTime.getTime() + (Number(timedelta) / 1000));
         root = root.ele('trkpt')
             .att('lat', lat.toString())
             .att('lon', lng.toString())
